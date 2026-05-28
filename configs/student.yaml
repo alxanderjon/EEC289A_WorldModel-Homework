@@ -4,7 +4,7 @@ torch_num_threads: 1
 
 model:
   hidden_dim: 256
-  num_layers: 2
+  num_layers: 3
   use_gru: true
 
 training:
@@ -22,7 +22,7 @@ training:
   checkpoint_mode: max
 
 loss:
-  one_step_weight: 1.0
+  one_step_weight: 2.0
   rollout_weight: 1.0
   rollout_train_horizon: 20
 
