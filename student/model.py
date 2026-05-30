@@ -29,7 +29,8 @@ class StudentWorldModel(nn.Module):
 
         self.encoder = nn.Sequential(*layers)
         self.gru = nn.GRUCell(hidden_dim, hidden_dim) if self.use_gru else None
-        self.head = nn.Linear(hidden_dim, obs_dim)
+        self.q_head = nn.Linear(hidden_dim, 2)
+        self.v_head = nn.Linear(hidden_dim, 2)
 
     def initial_hidden(self, batch_size: int, device: torch.device):
         if not self.use_gru:
@@ -45,6 +46,8 @@ class StudentWorldModel(nn.Module):
             hidden = self.gru(feat, hidden)
             feat = hidden
 
-        raw_delta = self.head(feat)
+        raw_delta_q = self.q_head(feat)
+        raw_delta_v = self.v_head(feat)
+        raw_delta = torch.cat([raw_delta_q, raw_delta_v], dim=-1)
         delta = self.delta_limit * torch.tanh(raw_delta / self.delta_limit)
         return delta, hidden
